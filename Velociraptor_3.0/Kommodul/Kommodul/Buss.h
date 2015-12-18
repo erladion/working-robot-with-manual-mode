@@ -22,7 +22,7 @@ volatile bool manualMode;
 volatile char sensorData[12];
 
 volatile bool sending;
-
+// Initiates the bus
 void initBuss();
 // Sends a specified amount of data to the specificed adress/module
 void sendData(char address, char* data, int datalength);
