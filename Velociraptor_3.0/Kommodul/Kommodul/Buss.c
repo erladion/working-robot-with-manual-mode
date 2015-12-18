@@ -39,7 +39,6 @@ volatile char* TWIdata;
 volatile char TWIaddress;
 volatile int TWIlength;
 volatile int TWIcounter;
-volatile bool firstRead;
 
 volatile int bluetoothCounter;
 
@@ -143,8 +142,7 @@ void sendData(char address, char* data, int datalength){
 
 
 void readData(char address){	
-	TWIaddress = address | 1; // Sets the read/write bit (the 8th bit) to 1 which creates a read call
-	firstRead = false;	
+	TWIaddress = address | 1; // Sets the read/write bit (the 8th bit) to 1 which creates a read call	
 	TWIcounter = 0;
 	TWIlength = 16; // The number of bytes that will be received from the sensor module
 	
