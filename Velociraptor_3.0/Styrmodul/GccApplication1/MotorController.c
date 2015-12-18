@@ -19,12 +19,9 @@ void drive_backwards(int speed){
 	drive_general(-speed,-speed);
 }
 void stop(){
-	//Motorer
+	// Turns off the timers
 	TCCR0A =  0x00;
 	TCCR2A =  0x00;
-	
-	//Griparm
-	//TIMSK1 = (0<<OCIE1A); //Disable timer1 interrupt
 }
 
 void rotate_left(int speed){
@@ -35,7 +32,8 @@ void rotate_right(int speed){
 	drive_general(-speed,speed);
 }
 
-void drive_general(int speed1, int speed2){	
+void drive_general(int speed1, int speed2){
+	// Activates the timers
 	TCCR0A =  _BV(WGM10) | _BV(COM1A1);
 	TCCR2A =  _BV(WGM10) | _BV(COM1A1);
 	if(speed1>0){ // if speed is positive, drive forwards, otherwise drive backwards
@@ -59,12 +57,8 @@ void drive_general(int speed1, int speed2){
 
 void init_motor_timers()
 {
-	defaultSpeed = 110; // Was 100 2015-12-15
+	defaultSpeed = 110;
 	rotateSpeed = 100;
-	DDRA = 0x00;
-	
-	DDRB = 0xFF;
-	DDRD = 0xFF;
 	
 	// enable 8 bit PWM, select inverted PWM
 	TCCR0A =  _BV(WGM10) | _BV(COM1A1);
