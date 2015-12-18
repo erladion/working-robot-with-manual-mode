@@ -8,10 +8,10 @@
 #include "BusValues.h"
 
 void updateBusValues(int var, int index) {
+	// We use a switch statement to save the value in the correct place
 	switch(index){
 		case 2:
 			startbutton = ((var & 0b01000000) >> 6);
-			//mode = ((var & 0b00001000) >> 3);
 			break;
 		case 3:			
 			reflex = (var << 8);
@@ -52,14 +52,4 @@ void updateBusValues(int var, int index) {
 		default:
 			break;
 	}
-	/*startbutton = ((TWIdata[2] & 0b01000000) >> 6);
-	mode = ((TWIdata[2] & 0b00100000) >> 5);
-	reflex = ((TWIdata[3] << 8) + TWIdata[4]);
-	currentAngle = ((TWIdata[5] << 8) +TWIdata[6]);
-	distanceFront = ((TWIdata[7] << 8) + TWIdata[8]);
-	distanceBack = ((TWIdata[9] << 8) + TWIdata[10]);
-	IRFR = TWIdata[11];
-	IRFL = TWIdata[12];
-	IRBR = TWIdata[13];
-	IRBL = TWIdata[14];*/
 }
