@@ -6,7 +6,6 @@
 #include <string.h>
 #include "Display.h"
 #include "DebugHelp.h"
-#include "Reflexsensormodul.h"
 
 
 //Ports
@@ -64,6 +63,7 @@ void lcd_init()
 	PORTD = (1<<DB7) | (1<<DB6);
 	_delay_ms(1);
 	
+	//Clear the screen
 	lcd_cmd(0x01);
 	_delay_ms(100);	
 }
@@ -110,7 +110,6 @@ char* lcd_build_row(char *label1, char *data1, char *label2, char *data2)
 	return tmpStr;
 }
 
-//Adds whitespace in front of the the inputed string until it reaches max_length+1.
 char* lcd_whitespace_adder(char *str, int max_length)
 {
 	static char result1[6];
@@ -143,39 +142,43 @@ char* lcd_whitespace_adder(char *str, int max_length)
 
 void lcd_update(bool manualMode, int gyro, int usf, int usr,int irfl, int irfr, int irrl, int irrr)
 {
+	//Display structure ("_" is whitespace).
+	//0123456789012345
+	//MODE_0__GYRO_012
+	//USF_012__USR_012
+	//IRFL_01__IRFR_01
+	//IRFL_01__IRFR_01
 	
 	char str1[10];
 	char str2[10];
-	char str3[10];
-	char str4[10];
 	
-	lcd_cmd(0x01);
-	_delay_ms(100);
+	if(manualMode){
+		strcpy(str1, "M");
+	}
+	else{
+		strcpy(str1, "A");
+	}
+	itoa(gyro,str2,10);
 	
-	lcd_cmd(0x80);	//Set row 1 on the displa
-	itoa(reflexValues[0],str1,10);
-	itoa(reflexValues[1],str2,10);
-	itoa(reflexValues[2],str3,10);
-	lcd_print(lcd_build_row(str1, lcd_whitespace_adder(str2, 4), lcd_whitespace_adder(str3, 4), ""));
+	//Write Mode, Gyro
+	lcd_cmd(0x80);	//Set row 1 on the display
+	lcd_print(lcd_build_row("MODE ", str1, " GYRO", lcd_whitespace_adder(str2, 4)));
 	
-	
+	itoa(usf,str1,10);
+	itoa(usr,str2,10);
+	//Write Ultrasound
 	lcd_cmd(0xc0);	//Set row 2 on the display
-	itoa(reflexValues[3],str1,10);
-	itoa(reflexValues[4],str2,10);
-	itoa(reflexValues[5],str3,10);
-	lcd_print(lcd_build_row(str1, lcd_whitespace_adder(str2, 4), lcd_whitespace_adder(str3, 4), ""));
+	lcd_print(lcd_build_row("USF", lcd_whitespace_adder(str1, 3), " REF", lcd_whitespace_adder(str2, 4)));
 	
-	
+	itoa(irfl,str1,10);
+	itoa(irfr,str2,10);
+	//Write IRFL, IRFR
 	lcd_cmd(0x90);	//Set row 3 the display
-	itoa(reflexValues[6], str1,10);
-	itoa(reflexValues[7], str2,10);
-	itoa(reflexValues[8], str3,10);
-	lcd_print(lcd_build_row(str1, lcd_whitespace_adder(str2, 4), lcd_whitespace_adder(str3, 4), ""));
+	lcd_print(lcd_build_row("IRFL", lcd_whitespace_adder(str1, 2), "  IRFR", lcd_whitespace_adder(str2, 2)));
 	
-	
+	itoa(irrl,str1,10);
+	itoa(irrr,str2,10);
+	//Write IRRL, IRRR
 	lcd_cmd(0xd0);	//Set row 4 the display
-	itoa(reflexValues[9], str1,10);
-	itoa(reflexValues[10],str2,10);
-	lcd_print(lcd_build_row(str1, lcd_whitespace_adder(str2, 4), "", ""));
-	
+	lcd_print(lcd_build_row("IRRL", lcd_whitespace_adder(str1, 2), "  IRRR", lcd_whitespace_adder(str2, 2)));
 }
