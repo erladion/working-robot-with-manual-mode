@@ -9,14 +9,11 @@
 #ifndef DEBUGHELP_H_
 #define DEBUGHELP_H_
 
-
-int bitArray[16];
-
 // Set the bit in the specified register
 #define sbi(port, bit) (port) |= (1 << (bit))
 // Clear the bit in the specified register
 #define cbi(port, bit) (port) &= ~(1 << (bit))
-
+// Sends a pulse on the specified pin in the specified port, used for debugging
 #define pulse(port, bit) cbi(port,bit); sbi(port, bit); cbi(port,bit);
 
 void intToBitArray(int array[], int arraySize, int num);
