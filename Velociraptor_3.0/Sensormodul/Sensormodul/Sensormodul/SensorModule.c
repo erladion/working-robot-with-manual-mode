@@ -43,17 +43,19 @@ void combineData(){
 	TWIdata[16] = 0;
 }
 
+// Interrupt that occurs everytime we press the startbutton
 ISR(PCINT1_vect){
+	// We XOR to just switch between true and false
 	if (bit_is_set(PINB,7)){
 		startButton ^= true;
 	}
 }
 
+// Initiate the startbutton
 void startButtonInit(){
 	DDRB &= ~(1<<PB7);
-	
-	PCMSK1 |= (1 << PCINT15); // Enables external interrupt on PB7
-		
+	// Enables external interrupt on PB7
+	PCMSK1 |= (1 << PCINT15); 
 	PCICR |= (1 << PCIE1);			
 }
 
@@ -70,22 +72,25 @@ int main(void){
 	reflex_init();
 	startButtonInit();
 	combineData();
-	test =0;
 	getBias();
 	sei();
 	DDRC |= (1 << 7); // Set PC7 as output for testing
 	DDRB |= (1 << 0);
 	while(1){
-		//int test = PINA7;
+		// Check if the modeswitch pin is set or not to indicate which mode we are in
+		// mode 1 = manual
+		// mode 0 = autonom
 		if (bit_is_set(PINB, 0)){
 			mode = 1;
 		}
 		else{
 			mode = 0;
 		}
-						
+				
 		_delay_ms(10);
+		// Read all the ir sensors
 		readAllIr();
+		// Make a read on all of the reflexsensors
 		reflex_run_all();
 		
 		// OBS: If this while is used, it doesn't take a lot of time for the data on the bus from the sensor module to the communications module to transfer and everything works properly for a while until it stops.
@@ -94,7 +99,9 @@ int main(void){
 		
 		// OBS! ULTRA SOUND WORKS WORSE WHEN YOU USE CLI AND SEI
 		cli();
+		// Update the lcd-display
 		lcd_update(mode,reflexValue1,reflexValues[1], reflexValues[2],IRFL, IRFR, IRBL, IRBR);
+		// Set the correct sensordata to each byte we send out on the bus
 		combineData();
 		sei();		
 	}
