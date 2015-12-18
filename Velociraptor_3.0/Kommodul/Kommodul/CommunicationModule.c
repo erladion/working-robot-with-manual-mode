@@ -30,8 +30,6 @@ int main(void){
 		// Read data from the sensor module
 		readData(0b00000100); 
 		_delay_ms(50);
-		// Check if the switch is set to manual mode or not
-		//manualMode = ((sensorData[2] & (1 << 3)) >> 3); 
 		
 		// If the switch is set to manual mode, send the sensor data to the steering module. 
 		//Otherwise, send the bluetooth data to the steering module.
@@ -45,7 +43,7 @@ int main(void){
 				bluetoothData[0] = '0';
 			}
 			else {				
-				bluetoothData[0] = (1 << 3);//sensorData[2];
+				bluetoothData[0] = (1 << 3);
 				sendData(0b00000010,bluetoothData,4);
 			}
 		}
