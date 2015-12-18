@@ -12,23 +12,23 @@
 
 int sendCounter = 40;
 
-
 int main(void){
 	initBluetooth();
 	initBuss();
-	//_delay_ms(100); // What does this do?
-	sei(); //Enable global interrupts
+	sei();
 	
 	DDRB |= 0b01111111;	
 	
 	while(1){
+		// Set in which the mode the robot is in
 		if (bit_is_set(PINB, 0)){
 			manualMode = 1;
 		}
 		else{
 			manualMode = 0;
 		}
-		readData(0b00000100); // Read data from the sensor module
+		// Read data from the sensor module
+		readData(0b00000100); 
 		_delay_ms(50);
 		// Check if the switch is set to manual mode or not
 		//manualMode = ((sensorData[2] & (1 << 3)) >> 3); 
