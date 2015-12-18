@@ -37,6 +37,7 @@ ISR(TIMER3_COMPA_vect){
 // Initiate the timer
 void initDistanceTimer(){
 	TCCR3B |= (1 << CS32) | (1 << WGM32);
+	// OCR3A value is calculated by (F_CPU / Prescalar) / 100 to get a timer which counts 1 timer per 10ms
 	OCR3AH = (573 >> 8);
 	OCR3AL = 573;
 	TIMSK3 = (1 << 1);
