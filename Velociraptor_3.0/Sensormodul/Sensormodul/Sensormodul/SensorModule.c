@@ -19,13 +19,12 @@
 #include "Reflexsensormodul.h"
 
 bool startButton;
-//bool mode;
 int reflex;
 volatile int mode; 
 
 void combineData(){
-	//startButton = false;
-	TWIdata[0] = 0x00; // trash data because the first two bytes dont work
+	// We send 2 empty bytes to make sure we dont lose any real data
+	TWIdata[0] = 0x00;
 	TWIdata[1] = 0x00;
 	TWIdata[2] = (1<<7) | (startButton << 6) | ( 1 < mode);
 	TWIdata[3] = (reflex_data >> 8);
@@ -42,25 +41,6 @@ void combineData(){
 	TWIdata[14] = IRBL;
 	TWIdata[15] = 0;
 	TWIdata[16] = 0;
-	
-	
-	/*TWIdata[0] = 'a';
-	TWIdata[1] = 'b';
-	TWIdata[2] = 'c';
-	TWIdata[3] = 'd';
-	TWIdata[4] = 'e';
-	TWIdata[5] = 'f';
-	TWIdata[6] = 'g';
-	TWIdata[7] = 'h';
-	TWIdata[8] = 'i';
-	TWIdata[9] = 'j';
-	TWIdata[10] = 'k';
-	TWIdata[11] = 'l';
-	TWIdata[12] = 'm';
-	TWIdata[13] = 'n';
-	TWIdata[14] = 'o';
-	TWIdata[15] = 'p';
-	TWIdata[16] = 'q';*/
 }
 
 ISR(PCINT1_vect){
@@ -95,7 +75,6 @@ int main(void){
 	sei();
 	DDRC |= (1 << 7); // Set PC7 as output for testing
 	DDRB |= (1 << 0);
-	// DDRA &= ~(1 << 7); // Set PA7 as input to get information from the switch ULTRA SOUND USES THIS PIN
 	while(1){
 		//int test = PINA7;
 		if (bit_is_set(PINB, 0)){
@@ -105,17 +84,15 @@ int main(void){
 			mode = 0;
 		}
 						
-		_delay_ms(10); // Necessary but why?
+		_delay_ms(10);
 		readAllIr();
 		reflex_run_all();
-		//hej = reglering(IRFL, IRFR, IRBL, IRBR);
 		
 		// OBS: If this while is used, it doesn't take a lot of time for the data on the bus from the sensor module to the communications module to transfer and everything works properly for a while until it stops.
 		// OBS: If it is not used, it takes a lot of time for the data on the bus from the sensor module to the communications module to transfer. But everything else works properly.
 		//while(sending); //wait with turning off interrupts until we are done sending data
 		
 		// OBS! ULTRA SOUND WORKS WORSE WHEN YOU USE CLI AND SEI
-		
 		cli();
 		lcd_update(mode,reflexValue1,reflexValues[1], reflexValues[2],IRFL, IRFR, IRBL, IRBR);
 		combineData();
