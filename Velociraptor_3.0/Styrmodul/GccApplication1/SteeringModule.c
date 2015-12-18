@@ -32,24 +32,11 @@
 // ENTER_MID_BEFORE_ROTATING_RIGHT: when the robot has found a junction and has to go the middle of the square before it starts rotating.
 // STRAIGHT: when the robot is going straight.
 
-// BusValues defined here, only this file can change these values.
-// These values are defined as extern in BusValues.h so all the files that will use these values will use the same value.
-/*int startbutton;
-int mode;
-int reflex;
-int currentAngle;
-int distanceFront;
-int distanceBack;
-int IRFR;
-int IRFL;
-int IRBR;
-int IRBL;*/
-
-
 // Drive forward with PD-regulation
 void driveForwardPD(){
 	 double change = reglering(IRFL, IRFR, IRBL, IRBR);
 	 if(change < 0){			 
+	 	// We cap the value at 255 to make sure the motors dont get overflow
 		 if (defaultSpeed - change > 255){
 			 change = defaultSpeed - 255;
 		 }	 
@@ -71,6 +58,7 @@ int main(void)
 	init_gripping_claw_timer();
 	initLabyrinthMemory();
 	
+	// Set this to false to not use the labyrinth memory and just use right turns
 	hardMode = false;
 	
 	TWIdata = "000";
@@ -91,6 +79,9 @@ int main(void)
 	_delay_ms(1000);
 	while(1)
     	{
+    	    // Sets the current mode
+    	    // mode 1 = manual
+    	    // mode 0 = autonomous
 	    if (bit_is_set(PINB, 0)){
 		    mode = 1;
 	    }
@@ -106,23 +97,15 @@ int main(void)
 				if (!objectFinder(reflex) && current_mode == STRAIGHT && labyrinthmode != goingOut){
 					justFoundTape = true;
 					addNode(false,false,false,true);
-					// If we have explored the whole labyrinth, take the object. Otherwise, keep exploring.
-					//if (!checkUnexploredNodes()){
-						current_mode = TAPE;
-						moveInLabyrinth(true);
-					//}
-					//else{
-						//startTurnAround(currentAngle);
-						//labyrinthmode = exploreWithTurningRight;
-					//}
+					current_mode = TAPE;
+					moveInLabyrinth(true);
 				}
-				/*
+				
 				else if(!objectFinder(reflex) && labyrinthmode == goingOut && justFoundTape == false && current_mode == STRAIGHT) {
 					_delay_ms(50);
 					stop();
 					while(1);
 				}
-				*/
 				
 				switch(current_mode)
 				{			
@@ -199,28 +182,31 @@ int main(void)
 						driveForwardPD();
 						break;
 				}
-			
+				
+				// If we are driving forward we measure the time for how long we have been travelling
 				if(current_mode == STRAIGHT || current_mode == ENTER_MID_BEFORE_ROTATING_RIGHT || current_mode == EXIT_JUNCTION_LEFT || current_mode == EXIT_JUNCTION_RIGHT){
 					startMeasuringDistance();
 					stopMeasuringRotateTime();
 					rotatedTime = 0;
+					// When we have travelled 1 square we update the labyrinth memory
 					if (timeTraveled > timeToTravelSquare){
 						moveInLabyrinth(1);
 						timeTraveled -= timeToTravelSquare;
 						addNode(false,false,true,false);
 					}
 				}
+				// If we are rotationg we measure the time for how long we have been rotating
 				else if (current_mode == ROTATE_LEFT || current_mode == ROTATE_RIGHT || current_mode == TURN_AROUND){
 					startMeasuringRotateTime();
 					stopMeasuringDistance();
 					timeTraveled = 0;					
-				}	
+				}
+				// Otherwise we reset the values and stop measuring
 				else{
 					stopMeasuringDistance();
 					timeTraveled = 0;
 					stopMeasuringRotateTime();
 					rotatedTime = 0;
-					
 				}
 			}
 			else
