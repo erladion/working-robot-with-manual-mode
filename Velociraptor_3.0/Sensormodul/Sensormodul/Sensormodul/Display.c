@@ -144,43 +144,10 @@ char* lcd_whitespace_adder(char *str, int max_length)
 void lcd_update(bool manualMode, int gyro, int usf, int usr,int irfl, int irfr, int irrl, int irrr)
 {
 	
-	//Display structure ("_" is whitespace).
-	//0123456789012345
-	//MODE_0__GYRO_012
-	//USF_012__USR_012
-	//IRFL_01__IRFR_01
-	//IRFL_01__IRFR_01
-	
 	char str1[10];
 	char str2[10];
 	char str3[10];
 	char str4[10];
-	
-	//lcd_cmd(0x01);
-	//_delay_ms(100);
-	/*
-	if(manualMode){
-		strcpy(str1, "M");
-	}
-	else{
-		strcpy(str1, "A");
-	}
-	itoa(gyro,str2,10);
-	
-	//Write Mode, Gyro
-	lcd_cmd(0x80);	//Set row 1 on the display
-	lcd_print(lcd_build_row("MODE ", str1, " GYRO", lcd_whitespace_adder(str2, 4)));
-	//lcd_print(lcd_build_row("MODE ", str1, " GYRO ", str2));
-	
-	itoa(usf,str1,10);
-	itoa(usr,str2,10);
-	//Write Ultrasound
-	lcd_cmd(0xc0);	//Set row 2 on the display
-	lcd_print(lcd_build_row("USF", lcd_whitespace_adder(str1, 3), " REF", lcd_whitespace_adder(str2, 4)));
-	//lcd_print(lcd_build_row("USF", lcd_whitespace_adder(str1, 3), "  USR", lcd_whitespace_adder(str2, 3)));
-	//lcd_print(lcd_build_row("USF ",str1, " REF ", str2));
-	*/
-	
 	
 	lcd_cmd(0x01);
 	_delay_ms(100);
@@ -210,80 +177,5 @@ void lcd_update(bool manualMode, int gyro, int usf, int usr,int irfl, int irfr, 
 	itoa(reflexValues[9], str1,10);
 	itoa(reflexValues[10],str2,10);
 	lcd_print(lcd_build_row(str1, lcd_whitespace_adder(str2, 4), "", ""));
-	
-	
-	/*
-	itoa(irfl,str1,10);
-	itoa(irfr,str2,10);
-	//Write IRFL, IRFR
-	lcd_cmd(0x90);	//Set row 3 the display
-	lcd_print(lcd_build_row("IRFL", lcd_whitespace_adder(str1, 2), "  IRFR", lcd_whitespace_adder(str2, 2)));
-	//lcd_print(lcd_build_row("IRFL ", str1, " IRFR ", str2));
-	
-	itoa(irrl,str1,10);
-	itoa(irrr,str2,10);
-	//Write IRRL, IRRR
-	lcd_cmd(0xd0);	//Set row 4 the display
-	//lcd_print(lcd_build_row("IRFL", lcd_white
-	lcd_print(lcd_build_row("IRRL", lcd_whitespace_adder(str1, 2), "  IRRR", lcd_whitespace_adder(str2, 2)));
-	//lcd_print(lcd_build_row("IRRL ", str1, " IRRR ", str2));
-	
-	
-	//char str1[10];
-	//char str2[10];
-	//
-	//lcd_cmd(0x01);
-	//_delay_ms(100);
-	//
-	//itoa(gyro,str2,10);
-	//if(mode == 1){
-		//strcpy(str1, "A");
-	//}
-	//else{
-		//strcpy(str1, "M");
-	//}
-	////Write Mode, Gyro	
-	//lcd_cmd(0x80);	//Set row 1 on the display
-	//lcd_print(lcd_build_row("MODE ", str1, " GYRO ", str2));
-	//
-	//itoa(usf,str1,10);
-	//itoa(usr,str2,10);
-	////Write Ultrasound
-	//lcd_cmd(0xc0);	//Set row 2 on the display
-	//lcd_print(lcd_build_row("USF ",str1, " USR ", str2));
-	//
-	//itoa(irfl,str1,10);
-	//itoa(irfr,str2,10);
-	////Write IRFL, IRFR
-	//lcd_cmd(0x90);	//Set row 3 the display
-	//lcd_print(lcd_build_row("IRFL ", str1, " IRFR ", str2));
-		//
-	//itoa(irrl,str1,10);
-	//itoa(irrr,str2,10);
-	////Write IRRL, IRRR
-	//lcd_cmd(0xd0);	//Set row 4 the display
-	//lcd_print(lcd_build_row("IRRL ", str1, " IRRR ", str2));
-	
-	
-	/*
-	//TESTS
-	//Write Mode, Gyro
-	
-	lcd_cmd(0x80);	//Set row 1 on the display
-	lcd_print(lcd_build_row("Mode ", "M  ", "Gyro ", "DEG"));
-	
-	//Write Ultrasound
-	lcd_cmd(0xc0);	//Set row 2 on the display
-	lcd_print(lcd_build_row("USF ", "CM_  ", "USR ", "CM_"));
-	
-
-	//Write IRFL, IRFR
-	lcd_cmd(0x90);	//Set row 3 the display
-	lcd_print(lcd_build_row("IRFL ", "CM_", "IRFR ", "CM_"));
-	
-	////Write IRRL, IRRR
-	lcd_cmd(0xd0);	//Set row 4 the display
-	lcd_print(lcd_build_row("IRRL ", "CM_", "IRRR ", "CM"));
-	*/
 	
 }
