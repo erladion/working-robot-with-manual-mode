@@ -51,6 +51,7 @@ unsigned char USARTReadChar(void) {
 	return UDR0;
 }
 
+// Sends back the data that we recieved, used for debugging
 void sendBackCommand(){	
 	UART_TxChar(command);
 	UART_TxChar(speed);
