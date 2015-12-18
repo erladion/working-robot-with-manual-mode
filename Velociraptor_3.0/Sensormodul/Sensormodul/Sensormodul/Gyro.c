@@ -117,22 +117,19 @@ ISR(TIMER2_COMPA_vect){
 	}
 }
 
+// Make a read straight in the beginning to give a value which will count as 0 degrees
 void getBias()
 {
-	
 	_delay_ms(1);
-	// Make a read straight in the beginning to give a value which will count as 0 degrees
-	
 	int sum = 0;	
 	
+	// Make 5 reads so we get an average since the A/D converted value fluxuates
 	for (int i = 0; i < 5; i++)
 	{
 		_delay_ms(1);
 		sum += adcGyro();
-	}	
-	
+	}
 	int average = sum/5;
-	
 	
 	defaultAngle = average;
 }
