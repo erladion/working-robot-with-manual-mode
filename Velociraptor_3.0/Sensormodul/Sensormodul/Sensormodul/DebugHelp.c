@@ -5,6 +5,7 @@
  *  Author: filma035
  */ 
 
+// Converts an integer into a bitarray of the specified size and saves it in the specified array
 void intToBitArray(int array[], int arraySize, int num){
 	int i;
 	
@@ -14,6 +15,7 @@ void intToBitArray(int array[], int arraySize, int num){
 	}
 }
 
+// Converts a bitarray into an integer
 int bitArrayToInt(int array[], int arraySize){
 	int i;
 	int res = 0;
