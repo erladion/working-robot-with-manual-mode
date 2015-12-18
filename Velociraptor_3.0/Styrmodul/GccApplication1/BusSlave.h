@@ -15,7 +15,5 @@ volatile char* TWIdata;
 volatile int TWIcounter;
 // Initialize the bus
 void initBuss(char address);
-// Variable for checking if we're receiving sensor values or bluetooth values
-volatile int sensor;
 
 #endif /* BUSSLAVE_H_ */
