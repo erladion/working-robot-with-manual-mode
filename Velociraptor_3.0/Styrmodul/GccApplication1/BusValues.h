@@ -9,7 +9,7 @@
 #ifndef BUSVALUES_H_
 #define BUSVALUES_H_
 
-//Declaring all the bus variables. So that all files point to the same value in memory.
+//Declaring all the sensor variables that we receinve from the bus and later use in the various parts of the steering module
 volatile int startbutton;
 volatile int mode;
 volatile int reflex;
@@ -21,6 +21,7 @@ volatile int IRFL;
 volatile int IRBR;
 volatile int IRBL;
 
+// Updates the correct variable given the value and given which index it has among the values we receive on the bus
 void updateBusValues(int var, int index);
 
 #endif /* BUSVALUES_H_ */
