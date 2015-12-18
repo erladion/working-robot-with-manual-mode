@@ -18,9 +18,13 @@ volatile int exiting_junction;
 
 // Initiate the timer which we use when we calculate for how long we have been going forward and for how long we have been rotating
 void initDistanceTimer();
+// Start measuring the time for how long we have been travelling
 void startMeasuringDistance();
+// Stop measuring the time for how long we have been travelling
 void stopMeasuringDistance();
+// Start measuring the time for how long we have been rotating
 void startMeasuringRotateTime();
+// Stop measuring the time for how long we have been rotating
 void stopMeasuringRotateTime();
 
 #endif /* TIMERFORCALCULATINGDISTANCES_H_ */
