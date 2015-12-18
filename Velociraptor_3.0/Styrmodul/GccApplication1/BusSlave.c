@@ -40,15 +40,6 @@ ISR(TWI_vect){
 	// Data is received
 	if ((TWSR & 0xF8) == 0x80){
 		char var = TWDR;
-		if (TWIcounter <4){
-			//if (TWIcounter == 0){
-				//if (var != 0){
-					//mode = 1;
-				//}
-				//else{
-					//mode = 0;
-				//}
-			//}
 		if (mode)
 			TWIdata[TWIcounter] = var;
 		 } else {
@@ -67,6 +58,4 @@ ISR(TWI_vect){
 void initBuss(char address){
 	TWAR = address;
 	TWCR = (1 << TWEN) | (1 << TWEA) | (1 << TWIE) | (1 << TWINT);
-	//TWBR = 0x08;
-	sensor = 0;
 }
