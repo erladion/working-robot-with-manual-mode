@@ -11,16 +11,19 @@
 
 #include <stdbool.h>
 
+// Variable for storing the sensor data that's going to be sent to the steering module
 volatile char* TWIdata;
+// Variable that's used for saving the currently addressed slave module's address
 volatile char TWIaddress;
+// Variable for storing the number of bits that's being sent or received
 volatile int TWIlength;
+// Variable for indexing through TWIdata
 volatile int TWIcounter;
-volatile bool firstRead;
-
+// Variable for checking if the robot is in manual mode or not
 volatile bool manualMode;
-
+// Variable for storing the data received from the sensors
 volatile char sensorData[12];
-
+// Variable for checking if data is currently being sent or not
 volatile bool sending;
 // Initiates the bus
 void initBuss();
