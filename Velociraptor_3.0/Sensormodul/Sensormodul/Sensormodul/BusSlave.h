@@ -11,7 +11,7 @@
 
 // Variable for checking if data is currently being sent or not
 volatile int sending;
-// Variable for storing the sensor data that's going to be sent to the communications module
+// Variable for storing the sensor data that's going to be sent to the communication module
 volatile char* TWIdata;
 // Variable for indexing through TWIdata
 volatile int TWIcounter;   
