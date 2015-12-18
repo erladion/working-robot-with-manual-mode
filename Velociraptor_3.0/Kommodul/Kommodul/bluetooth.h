@@ -17,10 +17,15 @@ volatile int turnrate;
 
 volatile char bluetoothData[3];
 
+// Send a specified char
 void UART_TxChar(unsigned char data);
+// Send a string
 void UART_TxStr(char *str, int num);
+// Initiate the bluetooth
 void initBluetooth();
+// Read the next char that comes
 unsigned char USARTReadChar(void);
+// Sends back the data that we recieved, used for debugging
 void sendBackCommand();
 
 
