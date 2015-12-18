@@ -9,6 +9,7 @@
 #include "SensorAlgorithm.h"
 #include <math.h>
 
+// We don't use the IR value if it is above this threshold, since then it is not close to a wall
 volatile int IR_threshold = 40;
 
 	/* Definition of position in corridor
@@ -42,22 +43,8 @@ int corridor_robot_skewness(int A, int B, int C, int D)
 	////If negative, the front of the robot is pointing towards the left wall.
 	////If positive, the front of the robot is pointing towards the right wall.
 	int result;
-	//// If there is no wall to the left, but there is one to the right, the robot regulates only using the right wall
-	//if((A > IR_threshold || C > IR_threshold) && B < IR_threshold && D < IR_threshold){
-		//result = D-B;
-	//}
-	//// If there is no wall to the right, but there is one to the left, the robot regulates only using the left wall
-	//else if((B > IR_threshold || D > IR_threshold) && A < IR_threshold && C < IR_threshold){
-		//result = A-C;
-	//}
-	//// If we have walls on both sides we can regulate with both
-	//else if (A < IR_threshold && B < IR_threshold && C < IR_threshold && D < IR_threshold){
-	//}
-	//// If there aren't any walls on either side, we cannot regulate at all :(
-	//else{
-		//result = 0;
-	//}
-	//
+
+	// If we have walls on both sides we can regulate with both
 	if((A + B < 60) && (C + D < 60)){
 		int left_len_diff = A-C;
 		int right_len_diff = D-B;
@@ -65,6 +52,8 @@ int corridor_robot_skewness(int A, int B, int C, int D)
 		result = (left_len_diff + right_len_diff) / 2;		
 	}
 	else{
+		// Here we check different cases of which sensors can see walls, to make sure we don't regulate using bad values
+		// If we have too few values to use we return 0
 		if((A > IR_threshold) && (B > IR_threshold)){
 			result = 0;
 		}	
@@ -96,33 +85,26 @@ int corridor_side_position(int A, int B, int C, int D)
 	//If positive, the robot is to the right of the middle of the corridor.
 	int result;
 		
+	// If we have walls on both sides we can regulate with both
 	if(A + B < 60 && C+D < 60){
-		// If we have walls on both sides we can regulate with both
 		int dist_from_mid = (A-D)/2;
 		int dist_from_mid_2 = (C-B)/2;
 			
 		result = (dist_from_mid + dist_from_mid_2) /2;		
 	}
 	else{
-		/*
-		// If there is no wall to the left, but there is one to the right, the robot regulates only using the right wall
-		if((A > IR_threshold || C > IR_threshold) && B < IR_threshold && D < IR_threshold){
-			result = (20-B)/2;
-		}
-		// If there is no wall to the right, but there is one to the left, the robot regulates only using the left wall
-		else if((B > IR_threshold || D > IR_threshold) && A < IR_threshold && C < IR_threshold){
-			result = (A-20)/2;
-		}
-		*/
+		// Here we check different cases of which sensors can see walls, to make sure we don't regulate using bad values
 		if (A+B < 60){
 			result = (A-B)/2;
 		}
 		else if (C+D < 60){
 			result = (C-D)/2;
 		}
+		// If we have too few values to use we return 0
 		else if((A > IR_threshold) && (B > IR_threshold)){
 			result = 0;
 		}
+		// If only one side of the robot can regulate, we try to keep a certain distance to the wall instead of comparing values
 		else if(A < B){
 			result = (A-20)/2;
 		}
