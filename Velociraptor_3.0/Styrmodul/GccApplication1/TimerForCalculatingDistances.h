@@ -20,7 +20,6 @@ volatile int exiting_junction;
 void initDistanceTimer();
 void startMeasuringDistance();
 void stopMeasuringDistance();
-
 void startMeasuringRotateTime();
 void stopMeasuringRotateTime();
 
