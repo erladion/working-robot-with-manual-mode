@@ -4,9 +4,6 @@
 
 volatile int reflex_data;
 
-volatile int reflexValue1;
-volatile int reflexValue11;
-
 // Array for holding individual thresholds for the sensors
 volatile int threshold[11];
 
