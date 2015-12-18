@@ -11,19 +11,17 @@
 
 #include <stdbool.h>
 
-
 volatile int goingIn;
 volatile double timeTraveled;
 volatile double rotatedTime;
 volatile int exiting_junction;
 
+// Initiate the timer which we use when we calculate for how long we have been going forward and for how long we have been rotating
 void initDistanceTimer();
 void startMeasuringDistance();
 void stopMeasuringDistance();
 
 void startMeasuringRotateTime();
 void stopMeasuringRotateTime();
-
-
 
 #endif /* TIMERFORCALCULATINGDISTANCES_H_ */
