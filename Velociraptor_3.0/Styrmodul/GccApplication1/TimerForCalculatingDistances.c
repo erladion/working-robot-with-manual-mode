@@ -4,7 +4,6 @@
  * Created: 12/8/2015 9:37:53 PM
  *  Author: johja118
  */ 
-
 #include "TimerForCalculatingDistances.h"
 #include "NewLabyrinthMemory.h"
 #include <avr/interrupt.h>
@@ -14,7 +13,6 @@ bool rotating = false;
 
 // This happens about 100 times per second
 ISR(TIMER3_COMPA_vect){
-	//double distanceChange = currentSpeed / 255;
 	if (measure)
 	{
 		if(labyrinthmode != goingOut){
@@ -25,6 +23,7 @@ ISR(TIMER3_COMPA_vect){
 			timeTraveled += 0.5;
 		}
 	}
+	// Adds time to for how long we have been rotated depending if we are rotating or not
 	if(rotating){
 		rotatedTime += 1;
 	}
@@ -35,6 +34,7 @@ ISR(TIMER3_COMPA_vect){
 	exiting_junction++; // Variable that's needed for keeping track of how long we've been exiting a junction	
 }
 
+// Initiate the timer
 void initDistanceTimer(){
 	TCCR3B |= (1 << CS32) | (1 << WGM32);
 	OCR3AH = (573 >> 8);
