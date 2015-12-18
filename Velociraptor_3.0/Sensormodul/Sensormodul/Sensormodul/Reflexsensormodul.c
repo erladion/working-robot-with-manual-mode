@@ -1,7 +1,7 @@
 
 //OBS, sensorerna i modulen ska multiplexas.
-//Kontinuerlig drivning av sensorerna gör att dom överhettas och går sönder.
-//Dessutom ger en sensor sämre dynamik om närliggande sensor är tänd vid avläsning.
+//Kontinuerlig drivning av sensorerna gÃ¶r att dom Ã¶verhettas och gÃ¥r sÃ¶nder.
+//Dessutom ger en sensor sÃ¤mre dynamik om nÃ¤rliggande sensor Ã¤r tÃ¤nd vid avlÃ¤sning.
 
 // PB0 = Input
 // PB1 = Channel LSB
@@ -37,6 +37,7 @@ void reflex_init()
 }
 
 int adcRead(){	
+	// Chooses which channel in the A/D converter we use
 	cbi(ADMUX, MUX3);
 	sbi(ADMUX, MUX2);
 	cbi(ADMUX, MUX1);
@@ -64,24 +65,18 @@ void reflex_run(int channel_select)
 {
 	//Sends channel data on PB1-PB4 and enable signal on PB5.
 	PORTB = (channel_select<<1) | (1<<PB5);
-	//int testing = 0b00000111111;
-	//Receives response data on PB0
+	
 	_delay_ms(20);
 	int compareData = adcRead();
-	// Saves the values of sensor 1 and 11 in seperate variables, used for the display and to calibrate the threshold
-	//if (reflexValues[channel_select] < threshold[channel_select]){
-		reflexValues[channel_select] = compareData;
-	//}
+	// Saves the values of sensor 1 to 11 in seperate variables
+	reflexValues[channel_select] = compareData;
+	
 	if (compareData < threshold[channel_select]){
 		reflex_data &= ~(1 << channel_select);
 	}
 	else{
 		reflex_data |= (1 << channel_select);
 	}
-	
-	/*
-	reflex_data[channel_select] = (PINB & (1<<PB0));	
-	*/
 }
 
 void reflex_run_all(){
@@ -91,8 +86,7 @@ void reflex_run_all(){
 	}
 }
 
-
 void calibrateReflexSensors(){	
 	// Set threshold to the value in the middle of the values from sensor 1 and 11
-	//threshold = (reflexValue1 + reflexValue11)/2;	
+	threshold = (reflexValue[0] + reflexValue[10])/2;	
 }
