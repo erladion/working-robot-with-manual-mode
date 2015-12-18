@@ -49,7 +49,6 @@ ISR(TWI_vect){
 	switch (TWSR & 0xF8){
 	// START condition has been transmitted
 	case STARTTRANSMITTED:
-		//pulse(PORTB, 1);
 		TWDR = TWIaddress;
 		TWCR = SEND;
 		break;	
@@ -77,39 +76,21 @@ ISR(TWI_vect){
 	
 	// SLA+R transmitted
 	case SLARTRANSMITTED:
-		//pulse(PORTB, 2);
 		TWCR = RECEIVE;
 		break;
 	
 	// Data has been received
 	case DATARECEIVED:
-		// If it is the first byte, it is the size of the data
-		/*if (!firstRead){
-			TWIlength = TWDR;
-			firstRead = true;
-			TWIcounter = 0;			
+		sensorData[TWIcounter] = TWDR;
+		UART_TxChar(sensorData[TWIcounter]);				
+		TWIcounter++;
+		if (TWIcounter < TWIlength){
 			TWCR = RECEIVE;
 		}
-		else
-		{*/
-			sensorData[TWIcounter] = TWDR;
-			//if(bluetoothCounter == 100){
-				UART_TxChar(sensorData[TWIcounter]);				
-			//}
-			TWIcounter++;
-			if (TWIcounter < TWIlength){
-				TWCR = RECEIVE;
-			}
-			else{
-				TWCR = STOPSENDING;				
-				//UART_TxStr(sensorData, 13);				
-				//if(bluetoothCounter == 100){
-					UART_TxChar('\n');
-					//bluetoothCounter = 0;
-				//}
-				//bluetoothCounter++;
-			}
-		//}		
+		else{
+			TWCR = STOPSENDING;	
+			UART_TxChar('\n');
+		}		
 		break;	
 	
 	case RECEIVECOMPLETE:
@@ -124,7 +105,6 @@ ISR(TWI_vect){
 }
 
 void initBuss(){
-	//DDRC = 0xFF;
 	bluetoothCounter = 0;
 	
 	TWCR = INITBUSS; //Enable bus
@@ -149,10 +129,6 @@ void initBuss(){
 	TWSR &= ~(1 << TWPS1); // Set TWPS1 = 0	
 	sending = false;
 	TWBR = 16;
-}
-
-void ERROR(){
-	printf("NICHT");
 }
 
 void sendData(char address, char* data, int datalength){
