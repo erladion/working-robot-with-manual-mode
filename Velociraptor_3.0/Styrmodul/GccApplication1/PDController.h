@@ -8,7 +8,7 @@
 #ifndef PDCONTROLLER_H_
 #define PDCONTROLLER_H_
 
-// How much the robot will react on 
+// How much the robot will react on being skewed in the corridor
 #define KD 2.5
 // Scale factor which scales the whole return value
 #define SCALEFACTOR 4
