@@ -5,7 +5,6 @@
 
 volatile bool pastFirstLine = false;
 
-//Checks how many activated sensors there is in the given range.
 int activatedSensors(int reflexData, int startIndex, int stopIndex)
 {
 	int amountActivated = 0;
@@ -18,9 +17,10 @@ int activatedSensors(int reflexData, int startIndex, int stopIndex)
 	return amountActivated;
 }
 
-//Checks if any sensor is activated.
+
 bool objectFinder(int reflexData)
 {
+	// If at least 3 sensors are active, we have found the first tape
 	if (activatedSensors(reflexData, 0, 11) < 3) {
 		return true;
 	}
@@ -49,7 +49,8 @@ bool objectFinder(int reflexData)
 
 */
 void objectCentering(int reflexData)
-{		
+{	
+	// We drive a bit forward at the start to make sure we pass the first line
 	if (!pastFirstLine) {
 		drive_forward(50);
 		_delay_ms(300);
