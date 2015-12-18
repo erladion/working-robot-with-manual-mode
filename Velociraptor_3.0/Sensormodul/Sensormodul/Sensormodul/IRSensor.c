@@ -13,6 +13,7 @@
 #include "IRSensor.h"
 #include "DebugHelp.h"
 
+
 volatile uint16_t IR_adValue;
 volatile uint8_t IR_channel = 3;
 volatile uint16_t IR_values[4];
@@ -21,6 +22,7 @@ volatile uint8_t IRFR = 0;
 volatile uint8_t IRBL = 0;
 volatile uint8_t IRBR = 0;
 
+// Different lookup tables containing the A/D to cm translation, index using the A/D value and you will get a value in cm
 #pragma region Arrays
 int sensorZero[1024] = {
 	80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80,
@@ -159,113 +161,6 @@ int sensorThree[1024] = {
 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
 #pragma endregion IR
 
-#pragma region IR
-
-//uint16_t IR_getValue(uint8_t channel){
-	//ADMUX &= (0 << MUX0);
-	//ADMUX &= (0 << MUX1);
-	//
-	//channel = channel & 0b00000011;
-	//ADMUX |= channel;	
-	//
-	//ADCSRA |= (1 << ADSC);
-	//
-	//while((ADCSRA & (1 << ADSC)));
-	//
-	////ADCSRA |= (0 << ADIF);
-	//
-	///*
-	//if(ADC > 52 && ADC < 113){
-		//return(ADC);
-	//}
-	//else
-	//return 0;
-	//*/
-	//uint16_t adcVal = ADC;
-	//return(adcVal);
-//}
-//
-//uint8_t IR_changeChannel(uint8_t channel){
-	//ADMUX &= (0 << MUX0);
-	//ADMUX &= (0 << MUX1);
-	//
-	//channel += 1;
-	//channel &= 0b00000011;
-	//
-	//ADMUX |= channel;		
-	//
-	//ADCSRA |= (1 << ADSC);
-	//
-	//while((ADCSRA & (1 << ADSC)));
-	//
-	////ADCSRA |= (0 << ADIF);
-	//
-	//return(channel);
-//}
-//
-//void IR_init(){
-	//// Divide the clock by 128 (16MHz / 128 ~ 125kHz)
-	//// The ADC need a clock between 50kHz and 200kHz
-	//// And enable the ADC
-	//ADMUX |= (1 << REFS0);
-	////ADMUX |= (1 << ADLAR);	
-	//ADCSRA=(1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);	
-//}
-//
-//void IR_Interruptinit(){
-	//// Divide the clock by 128 (16MHz / 128 ~ 125kHz)
-	//// The ADC need a clock between 50kHz and 200kHz
-	//// And enable the ADC
-	//ADMUX |= (1 << REFS0);	
-	////ADMUX |= (1 << ADLAR);
-			//
-	//ADCSRA |= (1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADIE);
-//}
-//
-//void IR_read(uint8_t channel){
-	//IR_channel = IR_changeChannel(channel);
-	//IR_adValue = IR_getValue(IR_channel);
-	//IR_values[IR_channel] = IR_adValue;
-//}
-//
-//
-//ISR(ADC_vect){
-	//uint8_t thelow = ADCL;
-	//uint16_t theTenBitResult = (ADCH << 8) | thelow;
-//
-	//switch (ADMUX)
-	//{
-		//case 0b01000000:
-		//IR_values[0] = theTenBitResult;
-		//ADMUX = 0b01000001;
-		//break;
-		//
-		//case 0b01000001:
-		//IR_values[1] = theTenBitResult;
-		//ADMUX = 0b01000010;
-		//break;
-		//
-		//case 0b01000010:
-		//IR_values[2] = theTenBitResult;
-		//ADMUX = 0b01000011;
-		//break;
-		//
-		//case 0b01000011:
-		//IR_values[3] = theTenBitResult;
-		//ADMUX = 0b01000000;
-		//break;
-		//
-		//default:
-		////Default code
-		//break;
-	//}
-	//ADCSRA |= (1<<ADSC)& ~(0<<ADIF);
-//}
-
-
-#pragma endregion IR
-
-
 #pragma IR sensor
 int irRead(uint8_t channel){
 	// Read from ADMUX channel
@@ -277,12 +172,11 @@ int irRead(uint8_t channel){
 	sbi(ADCSRA, ADSC);
 	loop_until_bit_is_clear(ADCSRA,ADSC);
 	
-	//_delay_ms(5);
-	
 	// Start second conversion
 	sbi(ADCSRA, ADSC);
 	loop_until_bit_is_clear(ADCSRA,ADSC);
 	
+	// Read the low 8-bits before reading the 2 high bits to not corrupt the data
 	int low = ADCL;
 	int highAndLow = (ADCH << 8) | low;	
 	
@@ -290,7 +184,6 @@ int irRead(uint8_t channel){
 }
 
 void irInit(){
-	
 	//DDRA = 0x00;
 	// Use AREF = AVCC
 	sbi(ADMUX, REFS0);
@@ -302,7 +195,7 @@ void irInit(){
 	sbi(ADCSRA, ADEN);
 	
 	// Set prescalar to 128
-	//  ADPS2	ADPS1	ADPS0
+	//  		ADPS2		ADPS1		ADPS0
 	//		0		0		0	2
 	//		0		0		1	2
 	//		0		1		0	4
@@ -329,7 +222,7 @@ void readAllIr()
 	IR_values[3] = irRead(3);
 	sei();	
 		
-	// Needs adjustment, just placeholding
+	// Give the corresponding IR sensor the correct lookup table
 	IRBL = sensorZero[IR_values[0]];
 	IRBR = sensorOne[IR_values[1]];
 	IRFR = sensorTwo[IR_values[2]];
