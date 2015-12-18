@@ -54,13 +54,13 @@ void driveForwardPD(){
 			 change = defaultSpeed - 255;
 		 }	 
 		
-		 drive_general(defaultSpeed+change,defaultSpeed); //drive_general(defaultSpeed,defaultSpeed-change);
+		 drive_general(defaultSpeed+change,defaultSpeed);
 	 }
 	 else{
 		 if (change+defaultSpeed > 255){
 			 change = 255-defaultSpeed;
 		 } 
-		 drive_general(defaultSpeed,defaultSpeed-change); //drive_general(defaultSpeed+change,defaultSpeed);
+		 drive_general(defaultSpeed,defaultSpeed-change);
 	 }
 }
 
@@ -79,32 +79,9 @@ int main(void)
 	sei();	//global enable interrupts
 	
 	stop();
-	//
-	//labyrinthmode = goingOut;
-	//bestPath[0][0] = 9;
-	//bestPath[0][1] = 0;
-	//bestPath[1][0] = 9;
-	//bestPath[1][1] = 1;
-	//bestPath[2][0] = 10;
-	//bestPath[2][1] = 1;
-	//bestPath[3][0] = 10;
-	//bestPath[3][1] = 2;
-	//bestPath[4][0] = 10;
-	//bestPath[4][1] = 3;
-	//bestPath[5][0] = 9;
-	//bestPath[5][1] = 3;
-	//bestPathLength = 6;
-	//transformToDirectionList();
-	//bestDirectionPath[0] = right;
-	//bestDirectionPath[1] = up;
-	//bestDirectionPath[2] = left;
+	
 	currentStepInPath = 0;
 	labyrinthmode = lookingForObject;
-	// Good values for grab_object is somewhere between 250-400
-	//grab_object(250);
-	//_delay_ms(1000);
-	//grab_object(350);
-	//while(1);
 	
 	justFoundTape = false;
 	
@@ -113,7 +90,7 @@ int main(void)
 	
 	_delay_ms(1000);
 	while(1)
-    {
+    	{
 	    if (bit_is_set(PINB, 0)){
 		    mode = 1;
 	    }
@@ -126,7 +103,6 @@ int main(void)
 	    }
 	    else {
 			if(true){
-			//drive_forward(defaultSpeed);
 				if (!objectFinder(reflex) && current_mode == STRAIGHT && labyrinthmode != goingOut){
 					justFoundTape = true;
 					addNode(false,false,false,true);
@@ -158,19 +134,14 @@ int main(void)
 						if(hardMode){
 							findBestPath(start);
 						}	
-						//bestDirectionPath[0] = down;
-						//bestDirectionPath[1] = down;
-						//bestDirectionPath[2] = left;
 						current_mode = STRAIGHT;
 						currentStepInPath = 0;
 						break;
 				
 					case TAPE:
 						objectCentering(reflex);
-						//stop();
 						break;
 					case ROTATE_LEFT:
-						//grab_object(200);
 						rotating_left(currentAngle);
 						if(goingOut && justFoundTape){
 							justFoundTape = false;
@@ -178,7 +149,6 @@ int main(void)
 						break;
 			
 					case ROTATE_RIGHT:
-						//grab_object(200);
 						if(goingOut && justFoundTape){
 							justFoundTape = false;
 						}
@@ -186,13 +156,11 @@ int main(void)
 						break;
 				
 					case ENTER_MID_BEFORE_ROTATING_RIGHT:
-						//grab_object(300);
 						enter_mid_before_rotating_right(timeTraveled, currentAngle,distanceFront);
 						driveForwardPD();
 						break;
 				
 					case ENTER_MID_BEFORE_ROTATING_LEFT:
-						//grab_object(300);
 						enter_mid_before_rotating_left(timeTraveled, currentAngle, distanceFront);
 						driveForwardPD();
 						break;
@@ -208,7 +176,6 @@ int main(void)
 						break;	
 				
 					case TURN_AROUND:
-						//stop();
 						turn_around(currentAngle);
 						break;
 				
@@ -220,12 +187,6 @@ int main(void)
 							check_if_junction_and_keep_right(IRFR, IRBR, IRFL, IRBL, distanceFront, timeTraveled, currentAngle);
 						}
 						driveForwardPD();
-						//if(distanceFront != 0){
-							//driveForwardPD();
-						//}
-						//else{
-							//stop;
-						//}
 						break;
 				
 					case GO_FORWARD_IN_LEFT_JUNCTION:
