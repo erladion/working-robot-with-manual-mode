@@ -11,7 +11,16 @@
 #include "GrippingClaw.h"
 #include <avr/interrupt.h>
 
+//
+//
+// This does not quite work, so hardMode is turned off, see steeringmodule.c and NewLabyrinthMemory.H
+//
+//
+//
+
 void initLabyrinthMemory(){
+	// Sets all the objects in the labyrinth as walls
+	// The labyrinth memory is 19x10 in size so that we dont have to move the nodes around
 	for (int x = 0; x < 19; x++)
 	{
 		for (int y = 0; y < 10; y++)
@@ -20,16 +29,15 @@ void initLabyrinthMemory(){
 		}
 	}
 
+	// Sets the starting x and y
 	currentX = 9;
 	currentY = 0;
 	
+	// Sets the direction in which we are going
 	lastDirection = up;
 	
-	labyrinth[8][1] = start;
-	
-	labyrinth[9][1] = start;
-	labyrinth[9][2] = object; 
-	
+	// Sets a startnode at (9,2) which is our starting location
+	labyrinth[9][0] = start;
 }
 
 // Get opposite direction
@@ -67,8 +75,8 @@ direction getGlobalDirection(direction dir){
 	}
 }
 
+// Checks in each direction from the current position to see which kind of nodeType is in that direction
 void addNode(bool openLeft, bool openRight, bool openFront, bool isObject){
-	return;
 	if (lastDirection == up){
 		labyrinth[currentX][currentY+1] = (openFront ? (labyrinth[currentX][currentY+1] == path ? path : unexplored) : wall);
 		labyrinth[currentX-1][currentY] = (openLeft ? (labyrinth[currentX-1][currentY] == path ? path : unexplored) : wall);
@@ -117,6 +125,7 @@ void turnInLabyrinth(direction dir){
 	lastDirection = getGlobalDirection(dir);
 }
 
+// Gets the nodeType in the specified direction at a specified X and Y
 nodeType getNodeTypeInDir(int x, int y, direction dir){
 	if (dir == up)
 	{
@@ -155,7 +164,7 @@ nodeType getNodeTypeInDir(int x, int y, direction dir){
 	}
 }
 
-
+// Finds the best path to a specific nodeType from the current position
 void findBestPath(nodeType type){
 	int paths [100][50][2];
 	int pathLengths[100] = {0};
@@ -165,7 +174,7 @@ void findBestPath(nodeType type){
 	
 	for (int dir = 0; dir < 4; dir++)
 	{
-		if((getNodeTypeInDir(currentX, currentY, dir) == start)){	// && (getNodeTypeInDir(currentX,currentY,dir) != unexplored)){
+		if((getNodeTypeInDir(currentX, currentY, dir) != wall && (getNodeTypeInDir(currentX,currentY,dir) != unexplored)){
 			pathLengths[arrayLength] = 1;
 			paths[arrayLength][0][0] = getNewX(currentX, dir);
 			paths[arrayLength][0][1] = getNewY(currentY, dir);
@@ -176,25 +185,11 @@ void findBestPath(nodeType type){
 	for (int p = 0; p < arrayLength; p++)
 	{
 		if(labyrinth[paths[p][pathLengths[p]-1][0]][paths[p][pathLengths[p]-1][1]] == type){
-			//bestDirectionPath[0] = down;
-			//bestDirectionPath[1] = down;
-			//bestDirectionPath[2] = left;
 			for (int i = 0; i < pathLengths[p]; i++)
 			{
 				bestPath[i][0] = paths[p][i][0];
 				bestPath[i][1] = paths[p][i][1];
 			}
-			
-			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!DET HÄR ÄR HELT TOKIGT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//
-			//bestPathLength = pathLengths[p]-1 gör att bestPathLength blir negativ (för ett steg) och transformToDirection inte gör något.
-			//bestPath har även bara 1 "riktigt" värde så alla if-satser i transformToDirection failar.
 			
 			bestPathLength = pathLengths[p];
 			transformToDirectionList();
@@ -203,15 +198,6 @@ void findBestPath(nodeType type){
 		for (int dir = 0; dir < 4; dir++)
 		{
 			if(getNodeTypeInDir(paths[p][pathLengths[p]-1][0],paths[p][pathLengths[p]-1][1],dir) != wall && getNodeTypeInDir(paths[p][pathLengths[p]-1][0],paths[p][pathLengths[p]-1][1],dir) != unexplored){
-				//int newWay[50][2];
-				//memcpy(newWay,paths[p], 50);
-				//for (int i = 0; i < pathLengths[p]; i++)
-				//{
-					//newWay[i][0] = paths[p][i][0];
-					//newWay[i][1] = paths[p][i][1];
-				//}
-					
-					
 				if (pathLengths[p] > 2){
 					if (getNewX(paths[p][pathLengths[p]-1][0],dir) == paths[p][pathLengths[p]-3][0] && 
 						getNewY(paths[p][pathLengths[p]-1][1],dir) == paths[p][pathLengths[p]-3][1]){
@@ -230,13 +216,6 @@ void findBestPath(nodeType type){
 				paths[arrayLength][pathLengths[p]][1] = getNewY(paths[p][pathLengths[p]-1][1], dir);
 				pathLengths[arrayLength] = pathLengths[p] + 1;
 				arrayLength++;
-								
-				//for (int i = 0; i < pathLengths[p]; i++)
-				//{
-					//paths[arrayLength][i][0] = newWay[i][0];
-					//paths[arrayLength][i][1] = newWay[i][1];
-				//}
-				//arrayLength++;
 			}
 		}
 			
@@ -247,12 +226,6 @@ void transformToDirectionList(){
 	int dirLength = 0;
 	for (int i = 0; i < bestPathLength-1; i++)
 	{
-			_delay_ms(500);
-			grab_object(200);
-			_delay_ms(200);
-			grab_object(400);
-			_delay_ms(200);
-		//_delay_ms(1000);
 		if (bestPath[i][0] == bestPath[i+1][0] && bestPath[i][1] == bestPath[i+1][1] - 1){
 			if (dirLength == 0){
 			}
@@ -310,8 +283,6 @@ bool isCrossing(int x, int y){
 		}		
 	}
 	return amount > 2;
-	
-	
 }
 
 int getNewX(int x, int dir){
@@ -340,19 +311,6 @@ int getNewY(int y, int dir){
 
 bool shouldIGoThisWay(direction dir){
 	dir = getGlobalDirection(dir);
-	
-	//if (dir == up){
-		//return (bestPath[currentStepInPath][0] == currentX && bestPath[currentStepInPath][1] == currentY+1);
-	//}
-	//if (dir == down){
-		//return (bestPath[currentStepInPath][0] == currentX && bestPath[currentStepInPath][1] == currentY-1);
-	//}
-	//if (dir == left){
-		//return (bestPath[currentStepInPath][0] == currentX-1 && bestPath[currentStepInPath][1] == currentY);
-	//}
-	//if (dir == right){
-		//return (bestPath[currentStepInPath][0] == currentX+1 && bestPath[currentStepInPath][1] == currentY);
-	//}
 	return bestDirectionPath[currentStepInPath] == dir;
 }
 
@@ -368,4 +326,3 @@ bool checkUnexploredNodes(){
 	}
 	return false;
 }
-
