@@ -2,7 +2,8 @@
  * Gyro.c
  *
  * Created: 11/20/2015 11:00:42 AM
- *  Author: johja118
+ * Author: johja118
+ * Version: 1.0
  */ 
 
 
@@ -25,11 +26,6 @@ float gain = 0.65;
 float gyrotime = 0.01;
 const float angleThreshold = 10;
 
-int i;
-/*
- * Reads the current output value from the gyro and returns it
- *
- */
 uint16_t adcGyro(){
 	// Select which channel to make the ADC (Analog-digital converter) read on, since the gyro is connected to PA4 make a read on port 4.
 	// The three bits MUX2-MUX0 selects which channel to read from where MUX2 is MSB and MUX0 is LSB
@@ -117,7 +113,6 @@ ISR(TIMER2_COMPA_vect){
 	}
 }
 
-// Make a read straight in the beginning to give a value which will count as 0 degrees
 void getBias()
 {
 	_delay_ms(1);
