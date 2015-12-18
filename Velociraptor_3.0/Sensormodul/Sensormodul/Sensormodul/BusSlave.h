@@ -6,14 +6,16 @@
  * Version: 1.0
  */ 
 
-
 #ifndef BUSSLAVE_H_
 #define BUSSLAVE_H_
 
-volatile int sending; // Variable for checking if data is currently being sent or not
-volatile char* TWIdata; // Variable for storing the sensor data that's going to be sent to the communications module
-volatile int TWIcounter; // Variable for indexing through TWIdata
-
-void initBuss(char address); // Initialize the bus
+// Variable for checking if data is currently being sent or not
+volatile int sending;
+// Variable for storing the sensor data that's going to be sent to the communications module
+volatile char* TWIdata;
+// Variable for indexing through TWIdata
+volatile int TWIcounter;   
+// Initialize the bus
+void initBuss(char address);
 
 #endif /* BUSSLAVE_H_ */
