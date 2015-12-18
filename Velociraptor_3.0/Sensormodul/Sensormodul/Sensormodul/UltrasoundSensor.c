@@ -24,7 +24,6 @@ volatile int difference_back;
 
 volatile double distance;
 
-// initialize timer1
 void timer1_init()
 {
 	TCNT1 = 0; // initialize counter
@@ -42,7 +41,6 @@ void timer1_init()
 	TCCR1B |= (1 << CS11)|(1 << CS10);  // Prescale with 64, setting the frequency of timer1 to 2MHz
 }
 
-// initialize external interrupt on PCINT0 and PCINT2
 void ext_interrupt_init() {
 	PCMSK2 |= (1 << PCINT22); // Enables external interrupt on PC6 (Front)
 	PCMSK0 |= (1 << PCINT7); // Enables external interrupt on PA7 (Rear)
@@ -62,17 +60,9 @@ double calculate_distance(volatile int end_value){
 }
 
 ISR (TIMER1_COMPA_vect) {
-	//_delay_us(250);
-	//PCMSK2 &= ~(1 << PCINT22); // Disables external interrupt on PC6 (Front)
-	//PCMSK0 &= ~(1 << PCINT7); // Disables external interrupt on PA7 (Rear)
-	
 	PORTA |= (1 << DDA6);	// Set PTI to 1
 	_delay_us(20);			// Count for 20 micro seconds
 	PORTA &= ~(1 << DDA6);	// Set PTI to 0
-	//_delay_us(250);
-	
-	//PCMSK2 |= (1 << PCINT22); // Enables external interrupt on PC6 (Front)
-	//PCMSK0 |= (1 << PCINT7); // Enables external interrupt on PA7 (Rear)
 }
 
 ISR(PCINT2_vect) //interrupt service routine when PCINT2 changes (PC6)
