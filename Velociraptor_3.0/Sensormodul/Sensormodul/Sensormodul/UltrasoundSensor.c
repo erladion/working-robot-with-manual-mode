@@ -53,15 +53,14 @@ void ext_interrupt_init() {
 }
 
 double calculate_distance(volatile int end_value){
-	double time = end_value * 0.0004;	// SHOULD BE 0.0004!!! 0.0064 is for testing! 4 is how long a clock time period takes in centiseconds
+	double time = end_value * 0.0004;	// 0.0004 is how long a clock time period takes in centiseconds
 	double distance = 343 * time/2;		// distance = 343 * time/2, (Speed of sound = 343 m/s in air. Divided by two because the signal bounces back and forth)
 	return distance; // Distance is in centimeters
-	// return end_value*0.0686 also works for returning centimeters probably (it's a simplified version)
 }
 
 ISR (TIMER1_COMPA_vect) {
 	PORTA |= (1 << DDA6);	// Set PTI to 1
-	_delay_us(20);			// Count for 20 micro seconds
+	_delay_us(20); // Count for 20 micro seconds
 	PORTA &= ~(1 << DDA6);	// Set PTI to 0
 }
 
