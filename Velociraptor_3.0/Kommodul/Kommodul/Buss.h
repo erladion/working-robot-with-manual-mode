@@ -26,7 +26,7 @@ volatile bool sending;
 void initBuss();
 // Sends a specified amount of data to the specificed adress/module
 void sendData(char address, char* data, int datalength);
-// Read the data which is coming from the specified adress
+// Tell the device at the specified adress that we want data
 void readData(char address);
 
 #endif /* BUSS_H_ */
